@@ -1,15 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:uiclone1/screens/settings/view_models/dark_mode_config_vm.dart';
 
-class Settings extends StatelessWidget {
+class Settings extends ConsumerWidget {
   static const routeName = "/settings";
   const Settings({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Settings"),
@@ -17,10 +18,12 @@ class Settings extends StatelessWidget {
       body: ListView(
         children: [
           SwitchListTile(
-              value: context.watch<DarkModeConfigViewModel>().darkMode,
-              onChanged: (value) =>
-                  context.read<DarkModeConfigViewModel>().setDarkMode(value),
-              title: const Text("dark mode")),
+            value: ref.watch(darkModeConfigProvider).darkMode,
+            onChanged: (value) {
+              ref.read(darkModeConfigProvider.notifier).setDarkMode(value);
+            },
+            title: const Text("dark mode"),
+          ),
           ListTile(
             leading: Container(
               width: 80,

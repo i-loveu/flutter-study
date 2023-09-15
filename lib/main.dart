@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uiclone1/router.dart';
 import 'package:uiclone1/screens/settings/repo/dark_mode_config_repo.dart';
 import 'package:uiclone1/screens/settings/view_models/dark_mode_config_vm.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,10 +13,12 @@ void main() async {
   final repository = DarkModeConfigRepository(preferenses);
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => DarkModeConfigViewModel(repository),
+    ProviderScope(
+      overrides: [
+        darkModeConfigProvider.overrideWith(
+          () => DarkModeConfigViewModel(
+            repository,
+          ),
         )
       ],
       child: const MyApp(),
@@ -31,9 +34,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: router,
-      themeMode: context.watch<DarkModeConfigViewModel>().darkMode
-          ? ThemeMode.dark
-          : ThemeMode.light,
+      themeMode: false ? ThemeMode.dark : ThemeMode.light,
       title: 'Flutter Demo',
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
